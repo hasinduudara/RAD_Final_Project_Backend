@@ -22,3 +22,24 @@ export const saveProgress = async (req: Request, res: Response) => {
 
     res.json({ success: true, completed: record.completedParts });
 };
+
+export const getProgress = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user.id;
+
+        // Fetch all progress records for this user
+        const records = await Progress.find({ userId });
+
+        // Transform data to match frontend structure
+        const progressData = records.map((r) => ({
+            id: r._id.toString(),
+            courseName: r.course,
+            completedParts: r.completedParts.length
+        }));
+
+        res.json(progressData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Failed to fetch course progress" });
+    }
+};
