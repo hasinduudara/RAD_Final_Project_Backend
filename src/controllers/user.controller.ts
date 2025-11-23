@@ -135,3 +135,43 @@ export const welcome = async (req: Request, res: Response) => {
         user,
     });
 };
+
+export const getMe = async (req: Request, res: Response) => {
+    try {
+        // Fetch full user data from database including profileImage
+        const user = await User.findById(req.user._id).select("-password");
+
+        return res.json({
+            success: true,
+            user: user
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching user data"
+        });
+    }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const { fullName, email, profileImage } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                ...(fullName && { fullName }),
+                ...(email && { email }),
+                ...(profileImage && { profileImage })  // Make sure this line exists
+            },
+            { new: true }
+        ).select("-password");
+
+        return res.json({ success: true, user: updatedUser });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Error updating user" });
+    }
+};
+
