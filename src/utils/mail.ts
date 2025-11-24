@@ -20,3 +20,15 @@ export const sendOTPEmail = async (email: string, otp: string) => {
         `,
     });
 };
+
+// Generic Email Sender (Required for Admin Panel)
+export const sendEmail = async (to: string, subject: string, body: string) => {
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to,
+        subject,
+        // Send both plain text and HTML (replacing newlines with <br> for HTML)
+        text: body,
+        html: `<p>${body.replace(/\n/g, "<br>")}</p>`,
+    });
+};

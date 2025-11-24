@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User, { IUser } from "../models/user.model";
+import { sendEmail } from "../utils/mail";
+
 import {
     signAccessToken,
     signRefreshToken,
@@ -175,3 +177,48 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 };
 
+// Get all users (Admins & Students)
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        // Fetch all users but hide passwords
+        const users = await User.find().select("-password");
+        return res.json({ success: true, users });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Server error fetching users" });
+    }
+}
+
+// Delete User & Send Email
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { reason } = req.body; // We will send this from frontend
+
+        const userToDelete = await User.findById(id);
+        if (!userToDelete) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Send Email Notification
+        // Note: Ensure your 'utils/mail.ts' has a function like this, or adjust accordingly.
+        try {
+            await sendEmail(
+                userToDelete.email,
+                "Language Hub - Account Removed",
+                `Your account has been removed by the administrator.\n\nReason: ${reason}`
+            );
+        } catch (mailError) {
+            console.error("Failed to send email:", mailError);
+            // We continue to delete even if email fails, but log it.
+        }
+
+        // Remove User
+        await User.findByIdAndDelete(id);
+
+        return res.json({ success: true, message: "User removed successfully." });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Server error deleting user" });
+    }
+};
