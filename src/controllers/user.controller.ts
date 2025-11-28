@@ -222,3 +222,44 @@ export const deleteUser = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Server error deleting user" });
     }
 };
+
+// NEW: Create a new Admin
+export const createAdmin = async (req: Request, res: Response) => {
+    try {
+        const { fullName, email, password } = req.body;
+
+        if (!fullName || !email || !password) {
+            return res.status(400).json({ message: "All fields are required." });
+        }
+
+        const existing = await User.findOne({ email: email.toLowerCase() });
+        if (existing) {
+            return res.status(409).json({ message: "Email already registered." });
+        }
+
+        const hashed = await bcrypt.hash(password, 10);
+
+        const newAdmin = await User.create({
+            fullName,
+            email: email.toLowerCase(),
+            password: hashed,
+            role: "ADMIN", // Force role to ADMIN
+            profileImage: ""
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: "New admin created successfully.",
+            user: {
+                _id: newAdmin._id,
+                fullName: newAdmin.fullName,
+                email: newAdmin.email,
+                role: newAdmin.role
+            }
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Server error creating admin" });
+    }
+};
