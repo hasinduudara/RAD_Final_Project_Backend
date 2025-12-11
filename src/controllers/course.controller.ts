@@ -27,14 +27,13 @@ export const getProgress = async (req: Request, res: Response) => {
     try {
         const userId = req.user.id;
 
-        // Fetch all progress records for this user
         const records = await Progress.find({ userId });
 
-        // Transform data to match frontend structure
         const progressData = records.map((r) => ({
             id: r._id.toString(),
             courseName: r.course,
-            completedParts: r.completedParts.length
+            // CHANGE THIS LINE: Return the array, not the length
+            completedParts: r.completedParts
         }));
 
         res.json(progressData);

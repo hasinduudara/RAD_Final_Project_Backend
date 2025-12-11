@@ -12,7 +12,6 @@ export const signAccessToken = (user: IUser): string => {
     return jwt.sign(
         {
             sub: (user._id as mongoose.Types.ObjectId).toString(),
-            role: user.role,
             email: user.email,
             fullName: user.fullName,
         },
