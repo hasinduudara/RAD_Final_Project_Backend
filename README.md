@@ -30,6 +30,8 @@ A RESTful API backend for a language learning platform built with Node.js, Expre
 ### 🔴 Check Frontend Repository
 Make sure to also check out the frontend repository for this project: [Language Hub Frontend](https://github.com/hasinduudara/RAD_Final_Project_Frontend.git)
 
+Backend Deployed on: [Language Hub Backend API](https://test-vercel-new-be.vercel.app/)
+
 ## 🚀 Getting Started
 
 ### Installation
