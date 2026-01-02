@@ -2,10 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/tokens";
 import User from "../models/user.model";
 
-/**
- * Middleware to protect routes using Authorization: Bearer <accessToken>
- * If valid, attaches user info to req.user
- */
 export const requireAuth = async (
     req: Request,
     res: Response,

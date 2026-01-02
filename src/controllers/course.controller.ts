@@ -49,7 +49,7 @@ export const getProgress = async (req: Request, res: Response) => {
         const progressData = records.map((r) => ({
             id: r._id.toString(),
             courseName: r.course,
-            completedParts: r.completedParts // ✅ Corrected as per your comment
+            completedParts: r.completedParts
         }));
 
         res.json(progressData);
